@@ -1602,7 +1602,7 @@ input[type="file"] > input[type="button"]::-moz-focus-inner {
 .fresh-table .bootstrap-table .table > thead > tr > td,
 .fresh-table .bootstrap-table .table > tbody > tr > td,
 .fresh-table .bootstrap-table .table > tfoot > tr > td {
-  padding: 12px 8px !important;
+  padding: 0px 0px 0px 0px !important;
   vertical-align: middle;
 }
 .fresh-table .bootstrap-table .table > tbody > tr {

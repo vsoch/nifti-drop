@@ -27,10 +27,10 @@
             <div class="fresh-table full-color-orange">
                 <output id="list"></output>    
                 <div class="toolbar">
-                    <button id="alertBtn" class="btn btn-default">Alert</button>
+                    <button id="nidm" class="btn btn-default">Export NIDM</button>
                 </div>
         
-                <table id="fresh-table" class="table">
+                <table id="fresh-table" class="table" style="margin-left:20px">
                     <thead>
                 	<th data-field="name" data-sortable="true">Name</th>
                 	<th data-field="value" data-sortable="true">Value</th>
@@ -56,7 +56,7 @@
         
     <script type="text/javascript">
         var $table = $('#fresh-table'),
-            $alertBtn = $('#alertBtn'), 
+            $nidmBtn = $('#nidm'), 
             full_screen = false,
             window_height;
             
@@ -70,7 +70,7 @@
                 toolbar: ".toolbar",
 
                 showRefresh: false,
-                search: false,
+                search: true,
                 showToggle: true,
                 showColumns: false,
                 pagination: true,
@@ -113,8 +113,8 @@
                 }
             };
             
-            $alertBtn.click(function () {
-                alert("You pressed on Alert");
+            $nidmBtn.click(function () {
+                alert("Coming soon :)");
             });
         
             
@@ -146,8 +146,11 @@
 <script>
 //wait for document.ready to fire
 $(function () {
+    $.getScript('js/gzip.js');
     $.getScript('js/nifti.js');
     $.getScript('js/script.js');
+    $(".search").css("width","180px")
+    $('button[name=toggle]').css("height","40px")
 });
 </script>
 <link href='http://fonts.googleapis.com/css?family=Roboto:300' rel='stylesheet' type='text/css'>
