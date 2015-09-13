@@ -98,7 +98,8 @@ function handleFileSelect(evt) {
                       console.log(nifti);
                       fill_header_table(nifti);
                       $("#histogram_svg").remove()
-                      make_histogram(nifti.data,"#histy")
+                      viewimage(nifti);
+                      //make_histogram(nifti.data,"#histy")
 
                   };          
                   pako.inflate(new Uint8Array(buffer), null, null,
@@ -110,8 +111,8 @@ function handleFileSelect(evt) {
                   console.log(nifti);
                   fill_header_table(nifti);
                   $("#histogram_svg").remove()
-                  make_histogram(nifti.data,"#histy")
-
+                  //make_histogram(nifti.data,"#histy")
+                  viewimage(nifti);
                }
             
           }
