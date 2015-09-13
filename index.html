@@ -24,13 +24,13 @@
             <div id="error"></div>
         </div>
         <div class="row">
-            <div class="fresh-table full-color-orange">
+            <div class="fresh-table full-color-orange" style="margin-left:5px; margin-right:5px">
                 <output id="list"></output>    
                 <div class="toolbar">
                     <button id="nidm" class="btn btn-default">Export NIDM</button>
                 </div>
         
-                <table id="fresh-table" class="table" style="margin-left:20px">
+                <table id="fresh-table" class="table" style="margin-left:20px; padding-left:20px">
                     <thead>
                 	<th data-field="name" data-sortable="true">Name</th>
                 	<th data-field="value" data-sortable="true">Value</th>
@@ -149,7 +149,7 @@ $(function () {
     $.getScript('js/gzip.js');
     $.getScript('js/nifti.js');
     $.getScript('js/script.js');
-    $(".search").css("width","180px")
+    $(".search").css("width","160px")
     $('button[name=toggle]').css("height","40px")
 });
 </script>

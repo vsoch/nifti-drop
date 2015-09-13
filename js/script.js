@@ -13,7 +13,7 @@ function handleFileSelect(evt) {
     file = files[0]
     for (var i = 0, f; f = files[i]; i++) {
       output.push('<li><strong>', escape(f.name), '</strong> - ',
-                  f.size, ' bytes, last modified: ',
+                  f.size, ' bytes, modified: ',
                   f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a',
                   '</li>');
     }
@@ -76,12 +76,16 @@ function handleFileSelect(evt) {
              for (var key in nifti.header) {
                  if (nifti.header.hasOwnProperty(key)) {
                      var value = nifti.header[key];
+                     if (key == "srow"){
+                         value =  Array.prototype.slice.call(value);
+                         value = value.toString();
+                     }
                      var row = table.insertRow(0);
                      var cell1 = row.insertCell(0);
                      var cell2 = row.insertCell(1);
                      var cell3 = row.insertCell(2);
                      cell1.innerHTML = key;
-                     cell2.innerHTML = value
+                     cell2.innerHTML = value;
                  }
              }
             
