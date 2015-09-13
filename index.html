@@ -1,0 +1,153 @@
+<html>
+<!-- Nifti File Reader 
+   @vsoch, Poldracklab <3
+   Nifti Parsing: @scijs https://github.com/scijs/nifti-js
+   File Reader Learning: http://www.html5rocks.com/en/tutorials/file/dndfiles/
+   Nifti Standard: http://nifti.nimh.nih.gov/pub/dist/src/niftilib/nifti1.h
+-->
+<head>
+<title>nifti playground</title>
+<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<script src="http://d3js.org/d3.v3.js"></script>
+<link href="css/fresh-bootstrap-table.css" rel="stylesheet" />
+<link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+</head>
+
+<body>
+<div class="row">
+    <div class="col-md-3">
+        <div class="row">
+            <div id="drop_zone">Drop .nii here</div>
+            <div id="error"></div>
+        </div>
+        <div class="row">
+        <div class="fresh-table full-color-orange">
+        <output id="list"></output>    
+        <div class="toolbar">
+            <button id="alertBtn" class="btn btn-default">Alert</button>
+        </div>
+        
+        <table id="fresh-table" class="table">
+            <thead>
+            	<th data-field="name" data-sortable="true">Name</th>
+            	<th data-field="value" data-sortable="true">Value</th>
+            	<th data-field="actions" data-formatter="operateFormatter" data-events="operateEvents"></th>
+            </thead>
+            <tbody>
+                <tr>
+                	<td></td>
+                	<td></td>
+                	<td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+</div>
+
+</body>
+    <script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.js"></script>
+    <script type="text/javascript" src="js/bootstrap-table.js"></script>
+        
+    <script type="text/javascript">
+        var $table = $('#fresh-table'),
+            $alertBtn = $('#alertBtn'), 
+            full_screen = false,
+            window_height;
+            
+        $().ready(function(){
+            
+            window_height = $(window).height();
+            table_height = window_height - 20;
+            
+            
+            $table.bootstrapTable({
+                toolbar: ".toolbar",
+
+                showRefresh: false,
+                search: false,
+                showToggle: true,
+                showColumns: false,
+                pagination: true,
+                striped: true,
+                sortable: true,
+                height: table_height,
+                pageSize: 25,
+                pageList: [25,50,100],
+                
+                formatShowingRows: function(pageFrom, pageTo, totalRows){
+                    //do nothing here, we don't want to show the text "showing x of y from..." 
+                },
+                formatRecordsPerPage: function(pageNumber){
+                    return pageNumber + " rows visible";
+                },
+                icons: {
+                    refresh: 'fa fa-refresh',
+                    toggle: 'fa fa-th-list',
+                    columns: 'fa fa-columns',
+                    detailOpen: 'fa fa-plus-circle',
+                    detailClose: 'fa fa-minus-circle'
+                }
+            });
+            
+            window.operateEvents = {
+                //'click .like': function (e, value, row, index) {
+                //    alert('You click like icon, row: ' + JSON.stringify(row));
+                //    console.log(value, row, index);
+                //},
+                //'click .edit': function (e, value, row, index) {
+                //    alert('You click edit icon, row: ' + JSON.stringify(row));
+                //    console.log(value, row, index);    
+                //},
+                'click .remove': function (e, value, row, index) {
+                    $table.bootstrapTable('remove', {
+                        field: 'id',
+                        values: [row.id]
+                    });
+            
+                }
+            };
+            
+            $alertBtn.click(function () {
+                alert("You pressed on Alert");
+            });
+        
+            
+            $(window).resize(function () {
+                $table.bootstrapTable('resetView');
+            });    
+        });
+        
+
+        function operateFormatter(value, row, index) {
+            return [
+                //'<a rel="tooltip" title="Like" class="table-action like" href="javascript:void(0)" title="Like">',
+                //    '<i class="fa fa-heart"></i>',
+                //'</a>',
+                //'<a rel="tooltip" title="Edit" class="table-action edit" href="javascript:void(0)" title="Edit">',
+                //    '<i class="fa fa-edit"></i>',
+                //'</a>',
+                '<a rel="tooltip" title="Remove" class="table-action remove" href="javascript:void(0)" title="Remove">',
+                    '<i class="fa fa-remove"></i>',
+                '</a>'
+            ].join('');
+        }
+       
+    </script>
+
+        </div>
+</div>
+</body>
+<script>
+//wait for document.ready to fire
+$(function () {
+    $.getScript('js/nifti.js');
+    $.getScript('js/script.js');
+});
+</script>
+<link href='http://fonts.googleapis.com/css?family=Roboto:300' rel='stylesheet' type='text/css'>
+<link href='css/style.css' rel='stylesheet' type='text/css'>
+
