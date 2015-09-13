@@ -24,7 +24,7 @@
             <div id="error"></div>
         </div>
         <div class="row">
-            <div class="fresh-table full-color-orange" style="margin-left:5px; margin-right:5px">
+            <div class="fresh-table full-color-blue" style="margin-left:5px; margin-right:5px">
                 <output id="list"></output>    
                 <div class="toolbar">
                     <button id="nidm" class="btn btn-default">Export NIDM</button>
@@ -71,7 +71,7 @@
 
                 showRefresh: false,
                 search: true,
-                showToggle: true,
+                showToggle: false,
                 showColumns: false,
                 pagination: true,
                 striped: true,
@@ -146,7 +146,7 @@
 <script>
 //wait for document.ready to fire
 $(function () {
-    $.getScript('js/gzip.js');
+    $.getScript('js/plots.js');
     $.getScript('js/nifti.js');
     $.getScript('js/script.js');
     $(".search").css("width","160px")
