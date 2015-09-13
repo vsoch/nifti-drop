@@ -12,6 +12,23 @@
   font: 20pt bold 'Vollkorn';
   color: #bbb;
 }
+#button_zone {
+  border: 2px solid #F7F7F7;
+  -moz-border-radius: 0px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  padding: 25px 40px 55px 0px;
+  text-align: center;
+  font: 20pt bold 'Vollkorn';
+  color: #F7F7F7;
+  background-color: #F7F7F7;
+}
+.float-right-wrapper {
+  float: right;
+}
+.circle {
+  border-radius: 50px;
+}
 .thumb {
   height: 75px;
   border: 1px solid #000;
