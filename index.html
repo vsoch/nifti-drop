@@ -24,7 +24,7 @@
             <div id="error"></div>
         </div>
         <div class="row">
-            <div class="fresh-table full-color-blue" style="margin-left:5px; margin-right:5px">
+            <div class="fresh-table full-color-blue" style="margin-right:5px">
                 <output id="list"></output>    
                 <div class="toolbar">
                     <button id="nidm" class="btn btn-default">Export NIDM</button>
@@ -37,10 +37,10 @@
             	        <th data-field="actions" data-formatter="operateFormatter" data-events="operateEvents"></th>
                     </thead>
                     <tbody>
-                        <tr>
-                	    <td></td>
-                	    <td></td>
-                	    
+                        <tr style="background-color:none">
+                            <td></td>
+                            <td></td>
+                            <td></td>
                         </tr>
                     </tbody>
                 </table>
@@ -162,6 +162,7 @@ $(function () {
     $.getScript('js/script.js');
     $(".search").css("width","160px")
     $('button[name=toggle]').css("height","40px")
+    $("td").remove()
 });
 </script>
 <link href='http://fonts.googleapis.com/css?family=Roboto:300' rel='stylesheet' type='text/css'>
