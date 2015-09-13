@@ -44,7 +44,7 @@ var bar = svg.selectAll(".bar")
 
 bar.append("rect")
     .attr("x", 1)
-    .attr("width", 60)
+    .attr("width", 50)
     .attr("height", function(d) { return height - y(d.y); });
 
 bar.append("text")
