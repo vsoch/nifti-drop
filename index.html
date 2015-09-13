@@ -13,6 +13,7 @@
 <script src="http://d3js.org/d3.v3.js"></script>
 <link href="css/fresh-bootstrap-table.css" rel="stylesheet" />
 <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
 </head>
 
 <body>
@@ -23,30 +24,31 @@
             <div id="error"></div>
         </div>
         <div class="row">
-        <div class="fresh-table full-color-orange">
-        <output id="list"></output>    
-        <div class="toolbar">
-            <button id="alertBtn" class="btn btn-default">Alert</button>
-        </div>
+            <div class="fresh-table full-color-orange">
+                <output id="list"></output>    
+                <div class="toolbar">
+                    <button id="alertBtn" class="btn btn-default">Alert</button>
+                </div>
         
-        <table id="fresh-table" class="table">
-            <thead>
-            	<th data-field="name" data-sortable="true">Name</th>
-            	<th data-field="value" data-sortable="true">Value</th>
-            	<th data-field="actions" data-formatter="operateFormatter" data-events="operateEvents"></th>
-            </thead>
-            <tbody>
-                <tr>
-                	<td></td>
-                	<td></td>
-                	<td></td>
-                </tr>
-            </tbody>
-        </table>
+                <table id="fresh-table" class="table">
+                    <thead>
+                	<th data-field="name" data-sortable="true">Name</th>
+                	<th data-field="value" data-sortable="true">Value</th>
+            	        <th data-field="actions" data-formatter="operateFormatter" data-events="operateEvents"></th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                	    <td></td>
+                	    <td></td>
+                	    
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-    
+    <div class="col-md-9" id="histy"></div>     
 </div>
-
 </body>
     <script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
     <script type="text/javascript" src="js/bootstrap.js"></script>

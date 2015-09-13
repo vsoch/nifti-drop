@@ -27,3 +27,25 @@ ul {
   border-radius:2px;
   background-color: skyblue;
 }
+
+/* Histogram */
+#histy {
+    padding-top:100px;
+
+}
+
+.bar rect {
+  fill: darkorange;
+  shape-rendering: crispEdges;
+}
+
+.bar text {
+  fill: #fff;
+}
+
+.axis path, .axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
