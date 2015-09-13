@@ -1,4 +1,41 @@
-// Nifti Parsing: @scijs https://github.com/scijs/nifti-js
+var nifti;
+var res = {};
+
+res.error = null;
+littleEndian = false;
+res.dim_info = 0;
+dims = [];
+res.intent_p1 = 0;
+res.intent_p2 = 0;
+res.intent_p3 = 0;
+res.intent_code = 0;
+res.datatypeCode = 0;
+res.numBitsPerVoxel = 0;
+res.slice_start = 0;
+res.slice_end = 0;
+res.slice_code = 0;
+pixDims = [];
+res.vox_offset = 0;
+res.scl_slope = 1;
+res.scl_inter = 0;
+res.xyzt_units = 0;
+res.cal_max = 0;
+res.cal_min = 0;
+res.slice_duration = 0;
+res.toffset = 0;
+res.description = "";
+res.aux_file = "";
+res.intent_name = "";
+res.qform_code = 0;
+res.sform_code = 0;
+res.quatern_b = 0;
+res.quatern_c = 0;
+res.quatern_d = 0;
+res.qoffset_x = 0;
+res.qoffset_y = 0;
+res.qoffset_z = 0;
+affine = [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]];
+res.magic = 0;
 
 var nifti;
 
@@ -114,171 +151,200 @@ function decodeNIfTIUnits(units) {
   return (space === "" && time === "") ? undefined : [space, space, space, time]
 }
 
-// Read NiftiFile  
-function readNifti(buffer) {
+getStringAt = function (data, start, end) {
+    var str = "", ctr, ch;
 
-      var header = {};
-     
-      if (buffer.byteLength<348) {
-        throw new Error("The buffer is not even large enough to contain the minimal header I would expect from a NIfTI file!")
-      }
-      var buf8 = new Uint8Array(buffer)
-      var view = new DataView(buffer)
+    for (ctr = start; ctr < end; ctr += 1) {
+        ch = data.getUint8(ctr);
 
-      // What is the byte order?
-      var littleEndian = true
-      var dim = new Array(8)
-      dim[0] = view.getInt16(40, littleEndian)
-      if (1>dim[0] || dim[0]>7) {
-          littleEndian = !littleEndian
-          dim[0] = view.getInt16(40, littleEndian)
-      }
-      if (1>dim[0] || dim[0]>7) {
-          // Even if there were other /byte/ orders, we wouldn't be able to detect them using a short (16 bits, so only two bytes).
-          console.warn("dim[0] is out-of-range, we'll simply try continuing to read the file, but this will most likely fail horribly.")
-      }
-      header.dim0 = dim[0]  
-
-      // Get size of header (should be 348)
-      var sizeof_hdr = view.getInt32(0, littleEndian)
-      if (sizeof_hdr !== 348 && (1>dim[0] || dim[0]>7)) {
-          // Try to recover from weird dim info
-          littleEndian = !littleEndian
-          dim[0] = view.getInt16(40, littleEndian)
-          sizeof_hdr = view.getInt32(0, littleEndian)
-      if (sizeof_hdr !== 348) {
-          throw new Error("I'm sorry, but I really cannot determine the byte order of the (NIfTI) file at all.")
-       }
-       } else if (sizeof_hdr < 348) {
-          throw new Error("Header of file is smaller than expected, I cannot deal with this.")
-       } else if (sizeof_hdr !== 348) {
-          console.warn("Size of NIfTI header different from what I expect, but I'll try to do my best anyway (might cause trouble).")
-       }
-       var magic = String.fromCharCode.apply(null, buf8.subarray(344, 348))
-       if (magic !== "ni1\0" && magic !== "n+1\0") {
-           throw new Error("Sorry, but this does not appear to be a NIfTI-1 file. Maybe Analyze 7.5 format? or NIfTI-2?")
-       }
-       header.sizeof_hdr = sizeof_hdr;
-       header.magic = magic  
-
-       // Continue reading actual header fields
-       var dim_info = view.getInt8(39)
-       dim.length = 1+Math.min(7, dim[0])
-       for(var i=1; i<dim.length; i++) {
-           dim[i] = view.getInt16(40+2*i, littleEndian)
-           if (dim[i]<=0) {
-               console.warn("dim[0] was probably wrong or corrupt")
-               dim.length = i
-           }
+        if (ch !== 0) {
+            str += String.fromCharCode(ch);
         }
-        if (dim.length === 1) throw new Error("No valid dimensions!")
-        header.dim_info = dim_info
-        header.dim = dim  
+    }
 
-       // NIFTI HEADER
-       header.intent_p1 = view.getFloat32(56, littleEndian)
-       header.intent_p2 = view.getFloat32(56, littleEndian)
-       header.intent_p3 = view.getFloat32(56, littleEndian)
-       header.intent_code = view.getInt16(68, littleEndian)
-       header.datatype = decodeNIfTIDataType(view.getInt16(70, littleEndian))
-       header.bitpix = view.getInt16(72, littleEndian)
-       header.slice_start = view.getInt16(74, littleEndian)  
-       header.pixdim = new Array(dim.length)
-       for(var i=0; i<header.pixdim.length; i++) {
-           header.pixdim[i] = view.getFloat32(76+4*i, littleEndian)
-       } 
-       header.vox_offset = view.getFloat32(108, littleEndian)
-       header.scl_slope = view.getFloat32(112, littleEndian)
-       header.scl_inter = view.getFloat32(116, littleEndian)
-       header.slice_end = view.getInt16(120, littleEndian)
-       header.slice_code = view.getInt8(122)
-       header.xyzt_units = decodeNIfTIUnits(view.getInt8(123))
-       header.cal_max = view.getFloat32(124, littleEndian)
-       header.cal_min = view.getFloat32(128, littleEndian)
-       header.slice_duration = view.getFloat32(132, littleEndian)
-       header.toffset = view.getFloat32(136, littleEndian)
-       header.descrip = String.fromCharCode.apply(null, buf8.subarray(148, 228))
-       header.aux_file = String.fromCharCode.apply(null, buf8.subarray(228, 252))
-       header.qform_code = view.getInt16(252, littleEndian)
-       header.sform_code = view.getInt16(254, littleEndian)
-       header.quatern_b = view.getFloat32(256, littleEndian)
-       header.quatern_c = view.getFloat32(260, littleEndian)
-       header.quatern_d = view.getFloat32(264, littleEndian)
-       header.qoffset_x = view.getFloat32(268, littleEndian)
-       header.qoffset_y = view.getFloat32(272, littleEndian)
-       header.qoffset_z = view.getFloat32(276, littleEndian)
-       header.srow = new Float32Array(12)
-       for(var i=0; i<12; i++) {
-          header.srow[i] = view.getFloat32(280+4*i, littleEndian)
+    return str;
+};
+
+
+
+getByteAt = function (data, start) {
+    return data.getInt8(start);
+};
+
+
+
+getShortAt = function (data, start, littleEndian) {
+    return data.getInt16(start, littleEndian);
+};
+
+
+
+getIntAt = function (data, start, littleEndian) {
+    return data.getInt32(start, littleEndian);
+};
+
+
+getFloatAt = function (data, start, littleEndian) {
+    return data.getFloat32(start, littleEndian);
+};
+
+
+getQformMat = function () {
+    return convertNiftiQFormToNiftiSForm(quatern_b, quatern_c, quatern_d, qoffset_x,
+    qoffset_y, qoffset_z, pixDims[1], pixDims[2], pixDims[3], pixDims[0]);
+};
+
+convertNiftiQFormToNiftiSForm = function (qb, qc, qd, qx, qy, qz, dx, dy, dz,
+                                                                              qfac) {
+    var R = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
+        a,
+        b = qb,
+        c = qc,
+        d = qd,
+        xd,
+        yd,
+        zd;
+
+    // last row is always [ 0 0 0 1 ]
+    R[3][0] = R[3][1] = R[3][2] = 0.0;
+    R[3][3] = 1.0;
+
+    // compute a parameter from b,c,d
+    a = 1.0 - (b * b + c * c + d * d);
+    if (a < 0.0000001) {                   /* special case */
+
+        a = 1.0 / Math.sqrt(b * b + c * c + d * d);
+        b *= a;
+        c *= a;
+        d *= a;        /* normalize (b,c,d) vector */
+        a = 0.0;                        /* a = 0 ==> 180 degree rotation */
+    } else {
+
+        a = Math.sqrt(a);                     /* angle = 2*arccos(a) */
+    }
+
+    // load rotation matrix, including scaling factors for voxel sizes
+    xd = (dx > 0.0) ? dx : 1.0;       /* make sure are positive */
+    yd = (dy > 0.0) ? dy : 1.0;
+    zd = (dz > 0.0) ? dz : 1.0;
+
+    if (qfac < 0.0) {
+        zd = -zd;         /* left handedness? */
+    }
+
+    R[0][0] =       (a * a + b * b - c * c - d * d) * xd;
+    R[0][1] = 2.0 * (b * c - a * d) * yd;
+    R[0][2] = 2.0 * (b * d + a * c) * zd;
+    R[1][0] = 2.0 * (b * c + a * d) * xd;
+    R[1][1] =       (a * a + c * c - b * b - d * d) * yd;
+    R[1][2] = 2.0 * (c * d - a * b) * zd;
+    R[2][0] = 2.0 * (b * d - a * c) * xd;
+    R[2][1] = 2.0 * (c * d + a * b) * yd;
+    R[2][2] =       (a * a + d * d - c * c - b * b) * zd;
+
+    // load offsets
+    R[0][3] = qx;
+    R[1][3] = qy;
+    R[2][3] = qz;
+
+    return R;
+};
+
+readFileData = function (data) {
+
+    res = {}
+
+    var rawData = new DataView(data),
+        magicCookieVal = getIntAt(rawData, 0, littleEndian),
+        ctr,
+        ctrOut,
+        ctrIn,
+        index;
+
+    if (magicCookieVal !== 348) {  // try as little endian
+    littleEndian = true;
+        magicCookieVal = getIntAt(rawData, 0, littleEndian);
+    }
+
+    if (magicCookieVal !== 348) {
+    error = new Error("This does not appear to be a NIFTI file!");
+        return;
+    }
+
+res.dim_info = getByteAt(rawData, 39);
+
+    for (ctr = 0; ctr < 8; ctr += 1) {
+        index = 40 + (ctr * 2);
+        dims[ctr] = getShortAt(rawData, index, littleEndian);
+    }
+
+res.intent_p1 = getFloatAt(rawData, 56, littleEndian);
+res.intent_p2 = getFloatAt(rawData, 60, littleEndian);
+res.intent_p3 = getFloatAt(rawData, 64, littleEndian);
+res.intent_code = getShortAt(rawData, 68, littleEndian);
+
+res.datatypeCode = getShortAt(rawData, 70, littleEndian);
+res.numBitsPerVoxel = getShortAt(rawData, 72, littleEndian);
+
+res.slice_start = getShortAt(rawData, 74, littleEndian);
+
+    for (ctr = 0; ctr < 8; ctr += 1) {
+        index = 76 + (ctr * 4);
+        pixDims[ctr] = getFloatAt(rawData, index, littleEndian);
+    }
+
+res.vox_offset = getFloatAt(rawData, 108, littleEndian);
+
+res.scl_slope = getFloatAt(rawData, 112, littleEndian);
+res.scl_inter = getFloatAt(rawData, 116, littleEndian);
+
+res.slice_end = getShortAt(rawData, 120, littleEndian);
+res.slice_code = getByteAt(rawData, 122);
+
+res.xyzt_units = getByteAt(rawData, 123);
+
+res.cal_max = getFloatAt(rawData, 124, littleEndian);
+res.cal_min = getFloatAt(rawData, 128, littleEndian);
+
+res.slice_duration = getFloatAt(rawData, 132, littleEndian);
+res.toffset = getFloatAt(rawData, 136, littleEndian);
+
+res.description = getStringAt(rawData, 148, 228);
+
+res.qform_code = getShortAt(rawData, 252, littleEndian);
+res.sform_code = getShortAt(rawData, 254, littleEndian);
+
+res.quatern_b = getFloatAt(rawData, 256, littleEndian);
+res.quatern_c = getFloatAt(rawData, 260, littleEndian);
+res.quatern_d = getFloatAt(rawData, 264, littleEndian);
+res.qoffset_x = getFloatAt(rawData, 268, littleEndian);
+res.qoffset_y = getFloatAt(rawData, 272, littleEndian);
+res.qoffset_z = getFloatAt(rawData, 276, littleEndian);
+
+    for (ctrOut = 0; ctrOut < 3; ctrOut += 1) {
+        for (ctrIn = 0; ctrIn < 4; ctrIn += 1) {
+            index = 280 + (((ctrOut * 4) + ctrIn) * 4);
+            affine[ctrOut][ctrIn] = getFloatAt(rawData, index, littleEndian);
         }
-       header.intent_name = String.fromCharCode.apply(null, buf8.subarray(328, 344))  
-       header.extension = view.getInt32(348, littleEndian) 
-       if (header.extension !== 0) {
-           console.warn("Looks like there are extensions in use in this NIfTI file, which will all be ignored!")
-       }
-   
-       // Notes from scijs:
-       // Check bitpix
-       // "Normalize" datatype (so that rgb/complex become several normal floats rather than compound types, possibly also do something about bits)
-      // Note that there is actually both an rgb datatype and an rgb intent... (My guess is that the datatype corresponds to sizes = [3,dim[0],...], while the intent might correspond to sizes = [dim[0],...,dim[5]=3].)
-      // Convert to NRRD-compatible structure
-      var ret = {}
-      ret.dimension = dim[0]
-      ret.type = header.datatype // Do we feed anything incompatible?
-      ret.encoding = 'raw'
-      ret.endian = littleEndian ? 'little' : 'big'
-      ret.sizes = header.dim.slice(1) // Note that both NRRD and NIfTI use the convention that the fastest axis comes first!
+    }
 
-      if (header.xyzt_units !== undefined) {
-          ret.spaceUnits = header.xyzt_units
-          while(ret.spaceUnits.length < ret.dimension) { // Pad if necessary
-              ret.spaceUnits.push("")
-           }
-           ret.spaceUnits.length = ret.dimension // Shrink if necessary
-      }
-  
-      if (header.qform_code === 0) { // "method 1"
-          ret.spacings = pixdim.slice(1)
-          while(ret.spacings.length < ret.dimension) {
-              ret.spacings.push(NaN)
-          }
-          // For now assume 3D space
-          ret.spaceDimension = Math.min(ret.dimension, 3) 
-      } else if (header.qform_code > 0) { // "method 2"
-        // What to do with the different qform codes?
-        ret.space = "right-anterior-superior" 
-        var pixdim = header.pixdim;
-        var qfac = pixdim[0] === 0.0 ? 1 : pixdim[0]
-        var a = Math.sqrt(Math.max(0.0,1.0-(header.quatern_b*header.quatern_b+header.quatern_c*header.quatern_c+header.quatern_d*header.quatern_d)))
-        var b = header.quatern_b
-        var c = header.quatern_c
-        var d = header.quatern_d
-        ret.spaceDirections = [
-            [pixdim[1]*(a*a+b*b-c*c-d*d),pixdim[1]*(2*b*c+2*a*d),pixdim[1]*(2*b*d-2*a*c)],
-            [pixdim[2]*(2*b*c-2*a*d),pixdim[2]*(a*a+c*c-b*b-d*d),pixdim[2]*(2*c*d+2*a*b)],
-            [qfac*pixdim[3]*(2*b*d+2*a*c),qfac*pixdim[3]*(2*c*d-2*a*b),qfac*pixdim[3]*(a*a+d*d-c*c-b*b)]]
-            ret.spaceOrigin = [header.qoffset_x,header.qoffset_y,header.qoffset_z]
-        } else {
-            console.warn("Invalid qform_code: " + header.qform_code + ", orientation is probably messed up.")
-        }
+    affine[3][0] = 0;
+    affine[3][1] = 0;
+    affine[3][2] = 0;
+    affine[3][3] = 1;
 
-        if (header.sform_code > 0) {
-            console.warn("sform transformation are currently ignored.")
-        }
+res.intent_name = getStringAt(rawData, 328, 344);
+res.magic = getStringAt(rawData, 344, 348);
+res.affine = affine;
+res.pixdims = pixDims;
+res.dims = dims;
 
-       // Read data if it is here
-       if (header.magic === "n+1\0") {
-           if (header.vox_offset<352 || header.vox_offset>buffer.byteLength) {
-               throw new Error("Illegal vox_offset!")
-           }
-           ret.buffer = buffer.slice(Math.floor(header.vox_offset))
-           if (header.datatype !== 0) {
-               ret.data = parseNIfTIRawData(ret.buffer, header.datatype, dim, {endianFlag: littleEndian})
-           }
-  
-      }
-      nifti = {}
-      nifti.data = ret;
-      nifti.header = header;
-      return nifti;
-}
+var type = decodeNIfTIDataType(res.datatypeCode)
+
+nifti = {}
+data_region = data.slice(Math.floor(res.vox_offset))
+nifti.data = parseNIfTIRawData(data_region, type, dims, {endianFlag: littleEndian});
+nifti.header = res;
+
+return nifti;
+};

@@ -9,8 +9,8 @@ var margin = {top: 10, right: 30, bottom: 30, left: 30},
 
 var array =  Array.prototype.slice.call(inputdata);
 
-var xmin = parseInt(d3.min(array, function(d) { return d; }))
-var xmax = parseInt(d3.max(array, function(d) { return d; }))
+var xmin = d3.min(array, function(d) { return d; })
+var xmax = d3.max(array, function(d) { return d; })
 
 var x = d3.scale.linear()
     .domain([xmin, xmax])
@@ -30,6 +30,7 @@ var xAxis = d3.svg.axis()
     .orient("bottom");
 
 var svg = d3.select(div_name).append("svg")
+    .attr("id","histogram_svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
   .append("g")
@@ -43,7 +44,7 @@ var bar = svg.selectAll(".bar")
 
 bar.append("rect")
     .attr("x", 1)
-    .attr("width", x(data[0].dx) - 403)
+    .attr("width", 60)
     .attr("height", function(d) { return height - y(d.y); });
 
 bar.append("text")
