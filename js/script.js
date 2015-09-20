@@ -106,7 +106,7 @@ function handleFileSelect(evt) {
                       viewimage(file);
                       setTimeout(function(){
                           papayaContainers[0].viewer.loadOverlay([file],false,false);
-                      }, 200);
+                      }, 500);
                       //make_histogram(nifti.data,"#histy")
      
 
@@ -126,7 +126,7 @@ function handleFileSelect(evt) {
                  
                   setTimeout(function(){
                       papayaContainers[0].viewer.loadOverlay([file],false,false);
-                  }, 200);
+                  }, 500);
    
                }
             
