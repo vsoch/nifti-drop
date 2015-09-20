@@ -45,9 +45,11 @@ ul {
   background-color: skyblue;
 }
 
-/* Histogram */
+/* Histogram 
+not included in current version
+*/
+
 #histy {
-    padding-top:100px;
 
 }
 
@@ -60,9 +62,21 @@ ul {
   fill: #fff;
 }
 
+#canvas {
+  border-radius:10px;
+}
+
 .axis path, .axis line {
   fill: none;
   stroke: #000;
   shape-rendering: crispEdges;
 }
 
+#papayaContainer0 {
+   border-radius: 20px;
+   padding-left:10px
+}
+
+#papayaToolbar0 {
+   background-color: #F7F7F7;
+}
