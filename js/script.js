@@ -98,7 +98,7 @@ function handleFileSelect(evt) {
                       console.log(nifti);
                       fill_header_table(nifti);
                       $("#histogram_svg").remove()
-                      viewimage(nifti);
+                      viewimage();
                       //make_histogram(nifti.data,"#histy")
 
                   };          
@@ -112,7 +112,7 @@ function handleFileSelect(evt) {
                   fill_header_table(nifti);
                   $("#histogram_svg").remove()
                   //make_histogram(nifti.data,"#histy")
-                  viewimage(nifti);
+                  viewimage();
                }
             
           }
