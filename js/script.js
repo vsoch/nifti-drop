@@ -10,7 +10,7 @@ function handleFileSelect(evt) {
 
     // files is a FileList of File objects. List some properties.
     var output = [];
-    file = files[0]
+    file = files[0];
     for (var i = 0, f; f = files[i]; i++) {
       output.push('<li><strong>', escape(f.name), '</strong> - ',
                   f.size, ' bytes, modified: ',
@@ -19,6 +19,7 @@ function handleFileSelect(evt) {
     }
     document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
     nifti = readBlob(file)
+
   }
 
   function handleDragOver(evt) {
@@ -26,6 +27,7 @@ function handleFileSelect(evt) {
     evt.preventDefault();
     evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
   }
+
 
   // Setup the dnd listeners.
   var dropZone = document.getElementById('drop_zone');
@@ -71,6 +73,7 @@ function handleFileSelect(evt) {
 
   }
 
+
   // Function to read FILE BLOB.
   function readBlob(file) {
 
@@ -85,6 +88,8 @@ function handleFileSelect(evt) {
 
       // Here is the function that fires when the file is read
       // If we use onloadend, we need to check the readyState.
+    
+
       reader.onloadend = function(evt) {
           if (evt.target.readyState == FileReader.DONE) { // DONE == 2
               // Set global variable buffer with content from file
@@ -98,8 +103,12 @@ function handleFileSelect(evt) {
                       console.log(nifti);
                       fill_header_table(nifti);
                       $("#histogram_svg").remove()
-                      viewimage();
+                      viewimage(file);
+                      setTimeout(function(){
+                          papayaContainers[0].viewer.loadOverlay([file],false,false);
+                      }, 200);
                       //make_histogram(nifti.data,"#histy")
+     
 
                   };          
                   pako.inflate(new Uint8Array(buffer), null, null,
@@ -112,14 +121,22 @@ function handleFileSelect(evt) {
                   fill_header_table(nifti);
                   $("#histogram_svg").remove()
                   //make_histogram(nifti.data,"#histy")
-                  viewimage();
+
+                  viewimage(file);
+                 
+                  setTimeout(function(){
+                      papayaContainers[0].viewer.loadOverlay([file],false,false);
+                  }, 200);
+   
                }
             
           }
+          
       };
 
      // Read in file
      var blob = file.slice(0, file.size);
 
-     reader.readAsArrayBuffer(blob);
+     reader.readAsArrayBuffer(blob)
+     
   }
