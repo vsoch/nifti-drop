@@ -104,9 +104,7 @@ function handleFileSelect(evt) {
                       fill_header_table(nifti);
                       $("#histogram_svg").remove()
                       viewimage(file);
-                      setTimeout(function(){
-                          papayaContainers[0].viewer.loadOverlay([file],false,false);
-                      }, 500);
+                     
                       //make_histogram(nifti.data,"#histy")
      
 
@@ -124,10 +122,7 @@ function handleFileSelect(evt) {
 
                   viewimage(file);
                  
-                  setTimeout(function(){
-                      papayaContainers[0].viewer.loadOverlay([file],false,false);
-                  }, 500);
-   
+                 
                }
             
           }

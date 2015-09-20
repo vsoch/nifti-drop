@@ -90,12 +90,15 @@
      {"name":"OrRd", "data":[[0,1,0.968627,0.92549],[0.125,0.996078,0.909804,0.784314],[0.25,0.992157,0.831373,0.619608],[0.375,0.992157,0.733333,0.517647],[0.5,0.988235,0.552941,0.34902],[0.625,0.937255,0.396078,0.282353],[0.75,0.843137,0.188235,0.121569],[0.875,0.701961,0,0],[1,0.498039,0,0]]}];
      params["images"] = ["img/MNI152_T1_2mm_brain.nii.gz"];
      params["img/MNI152_T1_2mm_brain.nii.gz"] = {"parametric": true,  "lut":"Spectrum", "min":0,  "alpha":"0.75"};  
+     params[file.name] = {"parametric": true,  "lut":"Spectrum", "min":0,  "alpha":"0.75"};
 
      // Reset viewer and load new images
      papayaContainers[0].viewer.resetViewer(0,params);
      papayaContainers[0].toolbar.updateImageButtons();
      papayaContainers[0].viewer.loadBaseImage(["img/MNI152_T1_2mm_brain.nii.gz"],true)
-     
+     setTimeout(function(){
+         papayaContainers[0].viewer.loadOverlay([file],false,false);
+     }, 500);
           
   }
 
