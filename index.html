@@ -8,33 +8,32 @@
 -->
 <head>
 <title>nifti playground</title>
-<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
-<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-<script src="http://d3js.org/d3.v3.js"></script>
+<script src="js/jquery-2.1.4.min.js"></script>
+<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+<script src="js/bootstrap.min.js"></script>
+<script src="js/d3.min.js"></script>
 <link href="css/fresh-bootstrap-table.css" rel="stylesheet" />
 <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
 <script src="js/pako-inflate.js"></script>
-<script src="js/nifti.js"></script>
+<script src="js/volume.js"></script>
 
-	<link rel="stylesheet" type="text/css" href="http://rii.uthscsa.edu/mango/papayabeta/papaya.css?version=0.8&build=910" />
-    	<script type="text/javascript" src="http://rii.uthscsa.edu/mango/papayabeta/papaya.js?version=0.8&build=910"></script>
+	<link rel="stylesheet" type="text/css" href="css/papaya.css" /> <!--version=0.8&build=910-->
+    	<script type="text/javascript" src="js/papaya.js"></script> <!--version=0.8&build=910,beta-->
 
 </head>
 
 <body>
 <div class="row">
-    <div class="col-md-3">
+    <div id="bluetable" class="col-md-3">
         <div class="row">
-            <div id="drop_zone">Drop nii here</div>
+            <div id="drop_zone">Drop nii/nidm here</div>
             <div id="error"></div>
         </div>
         <div class="row">
             <div class="fresh-table full-color-blue" style="margin-right:5px">
                 <output id="list"></output>    
                 <div class="toolbar">
-                    <button id="nidm" class="btn btn-default">Export NIDM</button>
+                    <button id="export" class="btn btn-default">Export SVG</button>
                 </div>
         
                 <table id="fresh-table" class="table" style="margin-left:20px; padding-left:20px">
@@ -54,7 +53,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-9">
+    <div id="pappy" class="col-md-9">
         <div class="row">
             <div id="button_zone">
                 <div class="float-right-wrapper">
@@ -77,8 +76,10 @@
      params["kioskMode"] = true;
 
 
-// Function to add / remove image from viewer
-  function viewimage(file) {
+  // Function to add / remove image from viewer
+  function viewimage(file,filetype) {
+
+     filetype = typeof filetype !== 'undefined' ? filetype : "local";
 
      var params = [];
      params["worldSpace"] = true;
@@ -96,8 +97,14 @@
      papayaContainers[0].viewer.resetViewer(0,params);
      papayaContainers[0].toolbar.updateImageButtons();
      papayaContainers[0].viewer.loadBaseImage(["img/MNI152_T1_2mm_brain.nii.gz"],true)
+     
+     // This is not ideal, but a workaround for now
      setTimeout(function(){
-         papayaContainers[0].viewer.loadOverlay([file],false,false);
+          if (filetype == "url") {
+             papayaContainers[0].viewer.loadOverlay([file],true);
+          } else {
+              papayaContainers[0].viewer.loadOverlay([file],false,false);
+          }
      }, 500);
           
   }
@@ -116,7 +123,7 @@
         
     <script type="text/javascript">
         var $table = $('#fresh-table'),
-            $nidmBtn = $('#nidm'), 
+            $exportBtn = $('#export'), 
             full_screen = false,
             window_height;
             
@@ -173,8 +180,15 @@
                 }
             };
             
-            $nidmBtn.click(function () {
-                alert("Coming soon :)");
+            $exportBtn.click(function () {
+                canvas = $("canvas")[0];
+                var image = canvas.toDataURL("image/png");
+                var svgimg = document.createElementNS("http://www.w3.org/2000/svg", "image");
+                svgimg.setAttributeNS("http://www.w3.org/1999/xlink", 'xlink:href', image);
+                var serializer = new XMLSerializer();
+                var svg_blob = new Blob([serializer.serializeToString(svgimg)],{'type': "image/svg+xml"});
+                var url = URL.createObjectURL(svg_blob);
+                var svg_win = window.open(url, "svg_win");
             });
         
             
@@ -206,7 +220,9 @@
 <script>
 //wait for document.ready to fire
 $(function () {
-    $.getScript('js/plots.js');
+    $.getScript('js/rdf_store_min.js');
+    $.getScript('js/nidm.js');
+    $.getScript('js/nifti.js');
     $.getScript('js/script.js');
     $(".search").css("width","160px")
     $('button[name=toggle]').css("height","40px")

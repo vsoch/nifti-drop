@@ -49,89 +49,36 @@ function handleFileSelect(evt) {
       return undefined
   })()
 
-  // Function to fill table
-  function fill_header_table(nifti) {
-
-             // Set data values in table
-             var table = document.getElementById("fresh-table");
- 
-             for (var key in nifti.header) {
-                 if (nifti.header.hasOwnProperty(key)) {
-                     var value = nifti.header[key];
-                     if (key == "srow"){
-                         value =  Array.prototype.slice.call(value);
-                         value = value.toString();
-                     }
-                     var row = table.insertRow(0);
-                     var cell1 = row.insertCell(0);
-                     var cell2 = row.insertCell(1);
-                     var cell3 = row.insertCell(2);
-                     cell1.innerHTML = key;
-                     cell2.innerHTML = value;
-                 }
-             }
-
-  }
-
-
   // Function to read FILE BLOB.
   function readBlob(file) {
 
-      var reader = new FileReader();
-
       // Do we have a zipped file?
       zipfile = false;
+      nidm = false
       var fileparts = file.name.split(".");
       if (fileparts[fileparts.length-2] + "." + fileparts[fileparts.length-1] == "nii.gz") {
           zipfile = true;          
+          console.log("Found compressed nifti!");
+      }
+      if (fileparts[fileparts.length-1] == "ttl") {
+          nidm = true
+          console.log("Found nidm file!");
+
       }
 
-      // Here is the function that fires when the file is read
+      // Here are functions to fire depending on the file being read
       // If we use onloadend, we need to check the readyState.
     
+      if (nidm) {
+  
+          console.log("Found nidm file!")
+          processNidm(file);
+  
+      } else {
 
-      reader.onloadend = function(evt) {
-          if (evt.target.readyState == FileReader.DONE) { // DONE == 2
-              // Set global variable buffer with content from file
-              var buffer = evt.target.result; 
+          console.log("Found nifti file!")
+          processNifti(file);    
 
-              if (zipfile){
+      }
 
-                  finishedDecompress = function (data) {
-                      buffer = data;
-                      nifti = readFileData(buffer)
-                      console.log(nifti);
-                      fill_header_table(nifti);
-                      $("#histogram_svg").remove()
-                      viewimage(file);
-                     
-                      //make_histogram(nifti.data,"#histy")
-     
-
-                  };          
-                  pako.inflate(new Uint8Array(buffer), null, null,
-                      function (data) {finishedDecompress(data.buffer); });
-
-               } else {
-    
-                  nifti = readFileData(buffer);
-                  console.log(nifti);
-                  fill_header_table(nifti);
-                  $("#histogram_svg").remove()
-                  //make_histogram(nifti.data,"#histy")
-
-                  viewimage(file);
-                 
-                 
-               }
-            
-          }
-          
-      };
-
-     // Read in file
-     var blob = file.slice(0, file.size);
-
-     reader.readAsArrayBuffer(blob)
-     
-  }
+   };
