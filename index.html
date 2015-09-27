@@ -7,63 +7,60 @@
    File Reader Learning: http://www.html5rocks.com/en/tutorials/file/dndfiles/
 -->
 <head>
-<title>nifti playground</title>
-<script src="js/jquery-2.1.4.min.js"></script>
-<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
-<script src="js/bootstrap.min.js"></script>
-<script src="js/d3.min.js"></script>
-<link href="css/fresh-bootstrap-table.css" rel="stylesheet" />
-<link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
-<script src="js/pako-inflate.js"></script>
-<script src="js/volume.js"></script>
-
-	<link rel="stylesheet" type="text/css" href="css/papaya.css" /> <!--version=0.8&build=910-->
-    	<script type="text/javascript" src="js/papaya.js"></script> <!--version=0.8&build=910,beta-->
-
+    <title>nifti-nidm drop</title>
+    <script src="js/jquery-2.1.4.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/d3.min.js"></script>
+    <link href="css/fresh-bootstrap-table.css" rel="stylesheet" />
+    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://rawgithub.com/vsoch/font-brain/master/font-brain/font-brain.css" rel="stylesheet">
+    <script src="js/pako-inflate.js"></script>
+    <script src="js/volume.js"></script>
+    <script src="js/table.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/papaya.css" /> <!--version=0.8&build=910-->
+    <script type="text/javascript" src="js/papaya.js"></script> <!--version=0.8&build=910,beta-->
 </head>
 
 <body>
 <div class="row">
+
+    <!-- Left sidebar region for tables -->
     <div id="bluetable" class="col-md-3">
+
+        <!-- Drop zone -->
         <div class="row">
             <div id="drop_zone">Drop nii/nidm here</div>
             <div id="error"></div>
         </div>
-        <div class="row">
-            <div class="fresh-table full-color-blue" style="margin-right:5px">
-                <output id="list"></output>    
-                <div class="toolbar">
-                    <button id="export" class="btn btn-default">Export SVG</button>
-                </div>
-        
-                <table id="fresh-table" class="table" style="margin-left:20px; padding-left:20px">
-                    <thead>
-                	<th data-field="name" data-sortable="true">Name</th>
-                	<th data-field="value" data-sortable="true">Value</th>
-            	        <th data-field="actions" data-formatter="operateFormatter" data-events="operateEvents"></th>
-                    </thead>
-                    <tbody>
-                        <tr style="background-color:none">
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+
+        <!-- Tables for either nifti or nidm will be dynamically rendered here -->
+        <div class="row" id="tablerow">
         </div>
+
     </div>
+
+    <!-- Papaya viewer window -->
     <div id="pappy" class="col-md-9">
         <div class="row">
+
+            <!-- Buttons! -->
             <div id="button_zone">
                 <div class="float-right-wrapper">
+                    <a href="data/nidm.ttl" target="_blank">
+                        <button class="btn btn-default circle" style="padding: 2px 5px 2px 5px"><i class="fb fb-2x icon-nidm"></i></button>
+                    </a>
+                    <a href="data/motor_lips.nii" target="_blank">
+                        <button class="btn btn-default circle"><i class="fb icon-sagittal"></i></button>
+                    </a>
                     <a href="http://www.github.com/vsoch/nifti-drop" target="_blank">
                         <button class="btn btn-default circle"><i class="fa fa-github"></i></button>
                     </a>
             </div>
         </div>
-        <div class="row" id="histy">
+
 <script type="text/javascript">
+     var cx;
      var params = [];
      params["worldSpace"] = true;
      params["expandable"] = false;
@@ -81,18 +78,11 @@
 
      filetype = typeof filetype !== 'undefined' ? filetype : "local";
 
-     var params = [];
-     params["worldSpace"] = true;
-     params["expandable"] = false;
-     params["kioskMode"] = true;
-     params["combineParametric"] = true;
-     params["showControls"] = false;
-     params["luts"] = [{"name":"PuBu", "data":[[0,1,0.968627,0.984314],[0.125,0.92549,0.905882,0.94902],[0.25,0.815686,0.819608,0.901961],[0.375,0.65098,0.741176,0.858824],[0.5,0.454902,0.662745,0.811765],[0.625,0.211765,0.564706,0.752941],[0.75,0.0196078,0.439216,0.690196],[0.875,0.0156863,0.352941,0.552941],[1,0.00784314,0.219608,0.345098]]},
-     {"name":"OrRd", "data":[[0,1,0.968627,0.92549],[0.125,0.996078,0.909804,0.784314],[0.25,0.992157,0.831373,0.619608],[0.375,0.992157,0.733333,0.517647],[0.5,0.988235,0.552941,0.34902],[0.625,0.937255,0.396078,0.282353],[0.75,0.843137,0.188235,0.121569],[0.875,0.701961,0,0],[1,0.498039,0,0]]}];
-     params["images"] = ["img/MNI152_T1_2mm_brain.nii.gz"];
-     params["img/MNI152_T1_2mm_brain.nii.gz"] = {"parametric": true,  "lut":"Spectrum", "min":0,  "alpha":"0.75"};  
-     params[file.name] = {"parametric": true,  "lut":"Spectrum", "min":0,  "alpha":"0.75"};
+     // Tag canvas, and show export button
+     $($("canvas")[0]).attr("id","papaya-canvas")
+     $("#export").show()
 
+     params[file.name] = {"parametric": true,  "lut":"Spectrum", "min":0,  "alpha":"0.75"};
      // Reset viewer and load new images
      papayaContainers[0].viewer.resetViewer(0,params);
      papayaContainers[0].toolbar.updateImageButtons();
@@ -103,15 +93,36 @@
           if (filetype == "url") {
              papayaContainers[0].viewer.loadOverlay([file],true);
           } else {
-              papayaContainers[0].viewer.loadOverlay([file],false,false);
+             papayaContainers[0].viewer.loadOverlay([file],false,false);
           }
      }, 500);
-          
+    
+
   }
 
 </script>
 
-		<div class="papaya" data-params="params"></div>
+	<div class="papaya" data-params="params" style="background-color:black"></div>
+
+        <!-- View svg modal -->
+        <div class="modal" id="exportmodal">
+            <div class="modal-admin">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Right click to Save As</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div id="svgexport"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+
+
 	</body>
         </div>
     </div>     
@@ -121,82 +132,13 @@
     <script type="text/javascript" src="js/bootstrap.js"></script>
     <script type="text/javascript" src="js/bootstrap-table.js"></script>
         
-    <script type="text/javascript">
-        var $table = $('#fresh-table'),
-            $exportBtn = $('#export'), 
-            full_screen = false,
-            window_height;
+    <script type="text/javascript">        
             
         $().ready(function(){
-            
-            window_height = $(window).height();
-            table_height = window_height - 20;
-            
-            
-            $table.bootstrapTable({
-                toolbar: ".toolbar",
 
-                showRefresh: false,
-                search: true,
-                showToggle: false,
-                showColumns: false,
-                pagination: true,
-                striped: true,
-                sortable: true,
-                height: table_height,
-                pageSize: 25,
-                pageList: [25,50,100],
-                
-                formatShowingRows: function(pageFrom, pageTo, totalRows){
-                    //do nothing here, we don't want to show the text "showing x of y from..." 
-                },
-                formatRecordsPerPage: function(pageNumber){
-                    return pageNumber + " rows visible";
-                },
-                icons: {
-                    refresh: 'fa fa-refresh',
-                    toggle: 'fa fa-th-list',
-                    columns: 'fa fa-columns',
-                    detailOpen: 'fa fa-plus-circle',
-                    detailClose: 'fa fa-minus-circle'
-                }
-            });
-            
-            window.operateEvents = {
-                //'click .like': function (e, value, row, index) {
-                //    alert('You click like icon, row: ' + JSON.stringify(row));
-                //    console.log(value, row, index);
-                //},
-                //'click .edit': function (e, value, row, index) {
-                //    alert('You click edit icon, row: ' + JSON.stringify(row));
-                //    console.log(value, row, index);    
-                //},
-                'click .remove': function (e, value, row, index) {
-                    $table.bootstrapTable('remove', {
-                        field: 'id',
-                        values: [row.id]
-                    });
-            
-                }
-            };
-            
-            $exportBtn.click(function () {
-                canvas = $("canvas")[0];
-                var image = canvas.toDataURL("image/png");
-                var svgimg = document.createElementNS("http://www.w3.org/2000/svg", "image");
-                svgimg.setAttributeNS("http://www.w3.org/1999/xlink", 'xlink:href', image);
-                var serializer = new XMLSerializer();
-                var svg_blob = new Blob([serializer.serializeToString(svgimg)],{'type': "image/svg+xml"});
-                var url = URL.createObjectURL(svg_blob);
-                var svg_win = window.open(url, "svg_win");
-            });
-        
-            
-            $(window).resize(function () {
-                $table.bootstrapTable('resetView');
-            });    
-        });
-        
+            nifti_table();
+
+         });
 
         function operateFormatter(value, row, index) {
             return [
@@ -218,8 +160,8 @@
 </div>
 </body>
 <script>
-//wait for document.ready to fire
 $(function () {
+    $.getScript('js/scribl.min.js');    // for canvas export
     $.getScript('js/rdf_store_min.js');
     $.getScript('js/nidm.js');
     $.getScript('js/nifti.js');
@@ -227,6 +169,8 @@ $(function () {
     $(".search").css("width","160px")
     $('button[name=toggle]').css("height","40px")
     $("td").remove() // remove the fugly
+    $("#export").hide()
+
 });
 </script>
 <link href='http://fonts.googleapis.com/css?family=Roboto:300' rel='stylesheet' type='text/css'>

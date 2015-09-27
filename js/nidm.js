@@ -1,15 +1,8 @@
 var store;
 
-function make_cell(row,content,index) {
-    var cell = row.insertCell(index);
-    cell.innerHTML = content
-}
-
 // Function to fill the nidm table
 function fill_nidm_table(columns,data) {
 
-    console.log(columns)
-    console.log(data)
 
     // Resize to fit a larger table for nidm
     $("#bluetable").removeClass("col-md-3")
@@ -17,30 +10,10 @@ function fill_nidm_table(columns,data) {
     $("#pappy").removeClass("col-md-9")
     $("#pappy").addClass("col-md-6") 
     $("table tr").remove()
+    $("#papayaContainer0").css("padding-left","0px")     
     
-    // Set column values as header in table
-    var header = $("table")[0]
-    header.deleteTHead()
-    $($("table")[0]).css("width","")
-    var header = header.createTHead();
-    var row = header.insertRow(0);     
-    // Leave out stuff people don't need to see
-    make_cell(row,"cluster",0)
-    make_cell(row,"x",1)
-    make_cell(row,"equiv_z",2)
-    make_cell(row,"pval_fwer",2)
-
-    // Now add data to the table!
-    var table = $("table")[1]
-    table.delete
-    for(var i=0; i<data.length; i++) {
-        result = data[i]              
-        var row = table.insertRow(0);     
-        make_cell(row,result["cluster"],0)
-        make_cell(row,result["x"],1)
-        make_cell(row,parseFloat(result["equiv_z"]).toFixed(3),2)
-        make_cell(row,parseFloat(result["pval_fwer"]).toFixed(3),2)
-    }  
+    // Fill new nidm table
+    nidm_table(columns,data)
 }
 
 function processNidm(file) {

@@ -10,35 +10,8 @@ function fill_header_table(nifti) {
     $("#pappy").removeClass("col-md-6")
     $("#pappy").addClass("col-md-9")
 
-    // Set columns to be key and value
-    var header = $("table")[0]
-    header.deleteTHead()
-    var header = header.createTHead();
-    var row = header.insertRow(0);     
-    var cell1 = row.insertCell(0);
-    var cell2 = row.insertCell(1);
-    var cell3 = row.insertCell(2);
-    cell1.innerHTML = "Name";
-    cell2.innerHTML = "Value";
-
-    // Set data values in table
-    var table = document.getElementById("fresh-table");
- 
-    for (var key in nifti.header) {
-        if (nifti.header.hasOwnProperty(key)) {
-            var value = nifti.header[key];
-            if (key == "srow"){
-               value =  Array.prototype.slice.call(value);
-               value = value.toString();
-            }
-            var row = table.insertRow(0);
-            var cell1 = row.insertCell(0);
-            var cell2 = row.insertCell(1);
-            var cell3 = row.insertCell(2);
-            cell1.innerHTML = key;
-            cell2.innerHTML = value;
-         }
-    }
+    // Create new table with nifti-header
+    nifti_table(nifti.header)
 
 }
 
@@ -79,5 +52,5 @@ function processNifti(file) {
      // Read in nifti file
      var blob = file.slice(0, file.size);
      reader.readAsArrayBuffer(blob)
-
+ 
 };
