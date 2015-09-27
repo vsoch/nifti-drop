@@ -1,10 +1,16 @@
-# Nifti Playground
+# Nifti-Drop
 
-Read nifti file in browser **under development**
+Read nifti and nidm files in browser **under development**
 
- - view header details
- - plot a histogram
+ - view header details for nifti
+ - view nidm results
  - works in [browsers with FileReader support](http://caniuse.com/#feat=filereader)
- - export nidm (coming soon)
+ - uses [font brain](vsoch.github.io/font-brain) for nidm and brain imaging icons
+
+#### Coming Soon
+
+ - interactive coordinate browsing
+ - figure export
+ - multiple image browsing
 
 [demo](http://vsoch.github.io/nifti-drop)
