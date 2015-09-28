@@ -16,6 +16,13 @@ function fill_nidm_table(columns,data) {
     nidm_table(columns,data)
 }
 
+// Function to navigate to coordinate in papaya viewer
+function move_coordinate(x,y,z) {
+    var coor = new papaya.core.Coordinate();
+    papayaContainers[0].viewer.getIndexCoordinateAtWorld(parseFloat(x), parseFloat(y), parseFloat(z), coor);
+    papayaContainers[0].viewer.gotoCoordinate(coor);
+}
+
 function processNidm(file) {
 
       readnidm = new FileReader()

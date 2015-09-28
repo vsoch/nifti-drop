@@ -90,7 +90,7 @@ function nifti_table(header) {
 
 function nidm_table(columns,data) {
            
-    var tablehtml = '<div class="fresh-table full-color-blue"><output id="list"></output><div class="toolbar"><button id="export" class="btn btn-default">Export SVG</button></div><table id="fresh-table" class="table"><thead><th data-field="cluster" data-sortable="true">Cluster</th><th data-field="x" data-sortable="true">X</th><th data-field="y" data-sortable="true">Y</th><th data-field="z" data-sortable="true">Z</th><th data-field="equiv_z" data-sortable="true">Equiv_Z</th><th data-field="pval_fwer" data-sortable="true">pval_fwer</th><th data-field="actions" data-formatter="operateFormatter" data-events="operateEvents"></th></thead><tbody>'
+    var tablehtml = '<div class="fresh-table full-color-blue"><output id="list"></output><div class="toolbar"><button id="export" class="btn btn-default">Export SVG</button></div><table id="fresh-table" class="table"><thead><th data-field="cluster" data-sortable="true">Cluster</th><th data-field="x" data-sortable="true">X</th><th data-field="y" data-sortable="true">Y</th><th data-field="z" data-sortable="true">Z</th><th data-field="equiv_z" data-sortable="true">Equiv_Z</th><th data-field="pval_fwer" data-sortable="true">pval_fwer</th><th data-field="actions"></th></thead><tbody>'
 
 
     // Now add data to the table!
@@ -104,7 +104,9 @@ function nidm_table(columns,data) {
                                 parseFloat(coords[2]) +'</td><td>' + 
                                 parseFloat(result["equiv_z"]).toFixed(3) + '</td><td>' + 
                                 parseFloat(result["pval_fwer"]).toFixed(3) + '</td>' + 
-                                '<td></td></tr>'
+                                '<td><button class="btn btn-default circle" style="padding:2px" onclick=move_coordinate(' + 
+                                parseFloat(coords[0]) + ',' + parseFloat(coords[1]) + ',' +
+                                parseFloat(coords[2]) + ')><i class="fb icon-crosshair"></i></button></td></tr>'
     }  
 
     tablehtml = tablehtml + '</tbody></table></div>'
