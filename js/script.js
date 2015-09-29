@@ -49,38 +49,39 @@ var systemEndianness = (function() {
     return undefined
  })()
 
+
+// Function to determine file type
+function get_filetype(filename){
+
+    // Do we have a zipped file?
+    var filetype;
+    zipfile = false;
+    var fileparts = filename.split(".");
+    if (fileparts[fileparts.length-2] + "." + fileparts[fileparts.length-1] == "nii.gz") {
+        filetype = "nifti";          
+        console.log("Found nifti file!")
+        zipfile = true;
+
+    }
+    if (fileparts[fileparts.length-1] == "ttl") {
+        filetype = "nidm"
+        console.log("Found nidm file!")
+    }
+
+    return filetype
+}
+
+
 // Function to read FILE BLOB.
 function readBlob(file) {
 
-    // Do we have a zipped file?
-    zipfile = false;
-    nidm = false
-    var fileparts = file.name.split(".");
-    if (fileparts[fileparts.length-2] + "." + fileparts[fileparts.length-1] == "nii.gz") {
-        zipfile = true;          
-        console.log("Found compressed nifti!");
-    }
-    if (fileparts[fileparts.length-1] == "ttl") {
-        nidm = true
-        console.log("Found nidm file!");
-
-    }
-
-    // Here are functions to fire depending on the file being read
-    // If we use onloadend, we need to check the readyState.
+    var filetype = get_filetype(file.name)
     
-    if (nidm) {
-  
-        console.log("Found nidm file!")
+    if (filetype=="nidm") {
         processNidm(file);
-
     } else {
-
-        console.log("Found nifti file!")
         processNifti(file);    
-
     }
-
 
 };
 
@@ -100,4 +101,37 @@ function export_svg() {
     $('#exportmodal').modal('toggle');
     $('.modal-backdrop').remove();
 
+}
+
+// Get variables from the URL
+     function getUrlVars() {
+        var vars = {};
+        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+           vars[key] = value;
+        });
+        return vars;
+     }
+
+     //Get json name from the browser url
+     var file = getUrlVars()
+
+     if (typeof file["file"] == 'undefined'){ file = "none";}
+     else { file = file["file"].replace("/",""); }
+
+     // If a file is specified, read it!
+     if (file != "none") {
+
+         // Determine file type
+         if(file.substr(-1) === '/') {
+             file = file.substr(0, file.length - 1);
+         }
+         var filebasename = file.split("/")
+         var filetype = get_filetype(filebasename[filebasename.length-1]) 
+   
+        if (filetype=="nidm") {
+           $("#url").attr("value",file)
+           $("#urlbutton").click()
+        } else {
+           console.log("Reading nifti from url not yet supported.");
+        }
 }
