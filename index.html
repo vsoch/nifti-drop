@@ -60,6 +60,7 @@
         </div>
 
 <script type="text/javascript">
+
      var cx;
      var params = [];
      params["worldSpace"] = true;
@@ -158,6 +159,13 @@
 
         </div>
 </div>
+
+<!-- Hidden form for file select, if given from url -->
+<form action="" method="GET" class="hidden">
+  <input id="urlbutton" type="button" value="process file" name="submit" style="width:200px;height:20px;" onclick="processUrl(this.form.url.value);">
+  <input id="url" type="url" name="url" style="width:600px;height:20px;" value="">
+</form>
+
 </body>
 <script>
 $(function () {
@@ -170,7 +178,6 @@ $(function () {
     $('button[name=toggle]').css("height","40px")
     $("td").remove() // remove the fugly
     $("#export").hide()
-
 });
 </script>
 <link href='http://fonts.googleapis.com/css?family=Roboto:300' rel='stylesheet' type='text/css'>

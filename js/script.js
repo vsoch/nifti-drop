@@ -58,12 +58,9 @@ function readBlob(file) {
     var fileparts = file.name.split(".");
     if (fileparts[fileparts.length-2] + "." + fileparts[fileparts.length-1] == "nii.gz") {
         zipfile = true;          
-        console.log("Found compressed nifti!");
     }
     if (fileparts[fileparts.length-1] == "ttl") {
         nidm = true
-        console.log("Found nidm file!");
-
     }
 
     // Here are functions to fire depending on the file being read
@@ -99,5 +96,28 @@ function export_svg() {
     $("#svgexport").append($("<img src='" + svgimg.firstChild.imageData+ "' alt='file.svg' id='canvas-svg'>"));
     $('#exportmodal').modal('toggle');
     $('.modal-backdrop').remove();
+
+}
+
+// Get variables from the URL
+     function getUrlVars() {
+        var vars = {};
+        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+           vars[key] = value;
+        });
+        return vars;
+     }
+
+     //Get json name from the browser url
+     var file = getUrlVars()
+
+     if (typeof file["file"] == 'undefined'){ file = "none";}
+     else { file = file["file"].replace("/",""); }
+
+     // If a file is specified, read it!
+     if (file != "none") {
+
+        $("#url").attr("value",file)
+        $("#urlbutton").click()
 
 }
