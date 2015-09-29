@@ -30,7 +30,6 @@ function processNifti(file) {
                   finishedDecompress = function (data) {
                       buffer = data;
                       nifti = readFileData(buffer)
-                      console.log(nifti);
                       fill_header_table(nifti);
                       viewimage(file);
                  
@@ -41,7 +40,6 @@ function processNifti(file) {
                } else {
     
                   nifti = readFileData(buffer);
-                  console.log(nifti);
                   fill_header_table(nifti);
                   viewimage(file); 
                }         
