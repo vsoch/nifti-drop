@@ -24,11 +24,10 @@ view: open a temporary web browser (to run locally). If True, images will be cop
       should be unique. 
 
 """
-def generate(viewer_input,base_image,view_in_browser=False):
-
-    template = get_template("index")  
+def generate(viewer_input,base_image,view_in_browser=False,bootstrap=True):
 
     if view_in_browser==True:
+        template = get_template("index")  
         new_viewer_input = generate_temp(viewer_input)
         new_image_paths = new_viewer_input.keys()
         new_nidm_paths = new_viewer_input.values()
@@ -42,6 +41,11 @@ def generate(viewer_input,base_image,view_in_browser=False):
         view(template,real_paths,new_paths,url_vars)
 
     else:
+        template = get_template("embed")  
+        if bootstrap:
+            template = template.split("\n")
+            template = get_bootstrap() + template
+            template = "\n".join(template)
         template = add_string("[SUB_SERVERIMAGES_SUB]",str(viewer_input.keys()),template)
         template = add_string("[SUB_SERVERNIDMS_SUB]",str(viewer_input.values()),template)
         template = add_string("[SUB_BASEIMAGE_SUB]",base_image,template)
@@ -59,3 +63,5 @@ def generate_temp(viewer_input):
         new_viewer_input[temp_image_path] = temp_nidm_path
     return new_viewer_input        
 
+def get_bootstrap():
+    return ['<script src="https://rawgit.com/vsoch/nifti-drop/master/js/jquery-2.1.4.min.js"></script>','<link rel="stylesheet" type="text/css" href="https://rawgit.com/vsoch/nifti-drop/master/css/bootstrap.min.css">','<script src="https://rawgit.com/vsoch/nifti-drop/master/js/bootstrap.min.js"></script>']
