@@ -24,10 +24,11 @@ view: open a temporary web browser (to run locally). If True, images will be cop
       should be unique. 
 
 """
-def generate(viewer_input,base_image,view_in_browser=False,bootstrap=True):
+def generate(viewer_input,base_image,view_in_browser=False,bootstrap=True,template_choice="index"):
+
+    template = get_template("index")  
 
     if view_in_browser==True:
-        template = get_template("index")  
         new_viewer_input = generate_temp(viewer_input)
         new_image_paths = new_viewer_input.keys()
         new_nidm_paths = new_viewer_input.values()
@@ -41,7 +42,6 @@ def generate(viewer_input,base_image,view_in_browser=False,bootstrap=True):
         view(template,real_paths,new_paths,url_vars)
 
     else:
-        template = get_template("embed")  
         if bootstrap:
             template = template.split("\n")
             template = get_bootstrap() + template
