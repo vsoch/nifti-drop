@@ -1,13 +1,28 @@
-<script src="https://rawgit.com/vsoch/nifti-drop/master/js/d3.min.js"></script>
-<link href="https://rawgit.com/vsoch/nifti-drop/master/css/fresh-bootstrap-table.css" rel="stylesheet" />
-<link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
-<link href="https://rawgithub.com/vsoch/font-brain/master/font-brain/font-brain.css" rel="stylesheet">
-<script src="https://rawgit.com/vsoch/nifti-drop/master/js/pako-inflate.js"></script>
-<script src="https://rawgit.com/vsoch/nifti-drop/master/js/volume.js"></script>
-<script src="https://rawgit.com/vsoch/nifti-drop/master/js/table.js"></script>
-<link rel="stylesheet" type="text/css" href="https://rawgit.com/vsoch/nifti-drop/master/css/papaya.css" /> <!--version=0.8&build=910-->
-<script type="text/javascript" src="https://rawgit.com/vsoch/nifti-drop/master/js/papaya.js"></script> <!--version=0.8&build=910,beta-->
+<html>
+<!-- Nifti File Reader 
+   @vsoch, Poldracklab <3
+   Nifti Learning: @scijs https://github.com/scijs/nifti-js
+                   @papaya viewer https://github.com/rii-mango/Papaya
+                   standard: http://nifti.nimh.nih.gov/pub/dist/src/niftilib/nifti1.h
+   File Reader Learning: http://www.html5rocks.com/en/tutorials/file/dndfiles/
+-->
+<head>
+    <title>nifti-nidm drop</title>
+    <script src="https://rawgit.com/vsoch/nifti-drop/master/js/jquery-2.1.4.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://rawgit.com/vsoch/nifti-drop/master/css/bootstrap.min.css">
+    <script src="https://rawgit.com/vsoch/nifti-drop/master/js/bootstrap.min.js"></script>
+    <script src="https://rawgit.com/vsoch/nifti-drop/master/js/d3.min.js"></script>
+    <link href="https://rawgit.com/vsoch/nifti-drop/master/css/fresh-bootstrap-table.css" rel="stylesheet" />
+    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://rawgithub.com/vsoch/font-brain/master/font-brain/font-brain.css" rel="stylesheet">
+    <script src="https://rawgit.com/vsoch/nifti-drop/master/js/pako-inflate.js"></script>
+    <script src="https://rawgit.com/vsoch/nifti-drop/master/js/volume.js"></script>
+    <script src="https://rawgit.com/vsoch/nifti-drop/master/js/table.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://rawgit.com/vsoch/nifti-drop/master/css/papaya.css" /> <!--version=0.8&build=910-->
+    <script type="text/javascript" src="https://rawgit.com/vsoch/nifti-drop/master/js/papaya.js"></script> <!--version=0.8&build=910,beta-->
+</head>
 
+<body>
 <div class="row">
 
     <!-- Left sidebar region for tables -->
@@ -42,7 +57,7 @@
 
 <script type="text/javascript">
 
-     server_images = [SUB_SERVERIMAGES_SUB];
+     //server_images = [SUB_SERVERIMAGES_SUB];
      server_nidms = [SUB_SERVERNIDMS_SUB]; 
 
      var cx;
@@ -62,23 +77,14 @@
      filetype = typeof filetype !== 'undefined' ? filetype : "local";
 
      var localfiletype = filetype
-     console.log(viewer_file);
 
-     // If the nidm file is local, grab the filename to load
-     var idx = server_nidms.indexOf(file)
-     if (idx!=-1){
-         viewer_file = server_images[idx]
-         params[viewer_file] = {"parametric": true,  "min":0, "lut":"OrRd", "negative_lut":"PuBu", "alpha":"0.75", "symmetric":true};    
-     } else {
-         params[viewer_file.name] = {"parametric": true,  "min":0, "lut":"OrRd", "negative_lut":"PuBu", "alpha":"0.75", "symmetric":true};
-     }
+     params[viewer_file.name] = {"parametric": true,  "min":0, "lut":"OrRd", "negative_lut":"PuBu", "alpha":"0.75", "symmetric":true};
      params["[SUB_BASEIMAGE_SUB]"] = {"parametric": true,  "min":0, "lut":"OrRd", "negative_lut":"PuBu", "alpha":"0.75", "symmetric":true};
-     console.log(viewer_file);
  
      // Tag canvas, and show export button
      $($("canvas")[0]).attr("id","papaya-canvas")
      $("#export").show()
-
+     console.log(viewer_file);
     
      // Reset viewer and load new images
      papayaContainers[0].viewer.resetViewer(0,params);
@@ -124,6 +130,10 @@
         </div>
     </div>     
 </div>
+</body>
+    <script type="text/javascript" src="https://rawgit.com/vsoch/nifti-drop/master/js/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="https://rawgit.com/vsoch/nifti-drop/master/js/bootstrap.js"></script>
+    <script type="text/javascript" src="https://rawgit.com/vsoch/nifti-drop/master/js/bootstrap-table.js"></script>
         
     <script type="text/javascript">        
             
@@ -149,7 +159,7 @@
        
     </script>
 
-    </div>
+        </div>
 </div>
 
 <!-- Hidden form for file select, if given from url -->
@@ -158,6 +168,7 @@
   <input id="url" type="url" name="url" style="width:600px;height:20px;" value="">
 </form>
 
+</body>
 <script>
 $(function () {
     $.getScript('https://rawgit.com/vsoch/nifti-drop/master/js/scribl.min.js');    // for canvas export
