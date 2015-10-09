@@ -24,7 +24,7 @@ view: open a temporary web browser (to run locally). If True, images will be cop
       should be unique. 
 
 """
-def generate(viewer_input,base_image,view_in_browser=False,bootstrap=True,template_choice="index"):
+def generate(viewer_input,base_image,view_in_browser=True,bootstrap=True,template_choice="index"):
 
     template = get_template(template_choice)  
 
