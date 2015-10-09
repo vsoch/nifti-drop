@@ -62,6 +62,7 @@
      filetype = typeof filetype !== 'undefined' ? filetype : "local";
 
      var localfiletype = filetype
+     console.log(viewer_file);
 
      // If the nidm file is local, grab the filename to load
      var idx = server_nidms.indexOf(file)
@@ -72,6 +73,7 @@
          params[viewer_file.name] = {"parametric": true,  "min":0, "lut":"OrRd", "negative_lut":"PuBu", "alpha":"0.75", "symmetric":true};
      }
      params["[SUB_BASEIMAGE_SUB]"] = {"parametric": true,  "min":0, "lut":"OrRd", "negative_lut":"PuBu", "alpha":"0.75", "symmetric":true};
+     console.log(viewer_file);
  
      // Tag canvas, and show export button
      $($("canvas")[0]).attr("id","papaya-canvas")
