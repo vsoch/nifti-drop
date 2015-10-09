@@ -15,7 +15,7 @@ setup(
     packages=find_packages(),
 
     # Data
-    package_data = {'niftidrop/template':['*.html','*.zip','*.js','*.css']},
+    package_data = {'niftidrop.template':['*.html','*.zip','*.js','*.css']},
 
     # Details
     url="http://www.github.com/vsoch/nifti-drop",
