@@ -26,7 +26,7 @@ view: open a temporary web browser (to run locally). If True, images will be cop
 """
 def generate(viewer_input,base_image,view_in_browser=False,bootstrap=True,template_choice="index"):
 
-    template = get_template("index")  
+    template = get_template(template_choice)  
 
     if view_in_browser==True:
         new_viewer_input = generate_temp(viewer_input)
